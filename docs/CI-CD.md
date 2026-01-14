@@ -152,12 +152,14 @@ Generates test results in Allure format
 **Step 5: Publish**
 ```yaml
 - name: Deploy to GitHub Pages
-  uses: peaceiris/actions-gh-pages@v3
+  uses: JamesIves/github-pages-deploy-action@v4
   with:
-    github_token: ${{ secrets.GITHUB_TOKEN }}
-    publish_branch: gh-pages
-    publish_dir: allure-history
+    branch: gh-pages
+    folder: allure-history
+    clean: false
 ```
+
+> **Why JamesIves action?** More reliable for first-time deployments and handles edge cases better than alternatives.
 
 ## What You Get
 
