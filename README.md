@@ -66,6 +66,7 @@ This table shows what the calculator can do and explains each feature simply:
 | **Folder Structure** | Organized folders for code, tests, docs, and assets | Professional package layout: `calculator/`, `tests/`, `docs/`, `assets/` | ✅ Done |
 | **uv Support** | Modern fast package manager (10-100x faster than pip!) | `pyproject.toml` for modern Python packaging | ✅ Done |
 | **Test Reports** | Pretty HTML reports after running tests | Auto-generated in `reports/` folder (git-ignored) | ✅ Done |
+| **Allure Reporting** | Enterprise test reporting with trends & history | Track test quality over time, detect flaky tests | ✅ Done |
 
 ## Quick Start
 
@@ -93,17 +94,26 @@ This will show a demo and then enter interactive mode where you can perform calc
 
 ### Run Tests
 
+**Quick test** (pytest-html):
 ```bash
 pytest
 ```
 
-For more details:
+**Enterprise reporting** (Allure with trends):
+```bash
+pytest --alluredir=allure-results
+allure serve allure-results
+```
+
+For more options:
 ```bash
 pytest -v              # Verbose output
 pytest --cov           # With coverage report
 ```
 
-After running tests, check `reports/test-report.html` for a beautiful visual report! 📊
+After running tests, check `reports/test-report.html` for a quick visual report!  
+Or use Allure for enterprise-level reporting with trends 📊  
+See [`docs/ALLURE.md`](docs/ALLURE.md) for details.
 
 ## Usage Examples
 
@@ -166,7 +176,8 @@ This project uses GitHub Actions for continuous integration:
 ├── docs/                    # 📚 Documentation
 │   ├── STRUCTURE.md        # Folder structure explained
 │   ├── TESTING.md          # pytest guide
-│   └── UV.md               # Modern package management
+│   ├── UV.md               # Modern package management
+│   └── ALLURE.md           # Enterprise test reporting
 ├── assets/                  # 🎨 Images and media
 │   └── logo.png            # Calculator robot logo
 ├── reports/                 # 📊 Test reports (auto-generated, git-ignored)

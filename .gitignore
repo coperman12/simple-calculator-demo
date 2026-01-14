@@ -42,6 +42,8 @@ htmlcov/
 *.cover
 reports/
 archive/
+allure-results/
+allure-report/
 test-output.xml
 output.json
 pytest_html_report.html
