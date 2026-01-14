@@ -84,10 +84,16 @@ jobs:
       - name: Generate Allure 3 Report
         if: always()
         run: |
-          npx allure generate allure-results --output allure-report
-          # Copy history for next run
-          mkdir -p allure-report/history
-          cp -r allure-results/history/* allure-report/history/ 2>/dev/null || true
+          # Install and generate report with Allure 3
+          npx --yes allure generate allure-results --output allure-report --name "Simple Calculator Tests"
+          
+          # List output to see structure
+          echo "=== Allure Report Output ==="
+          ls -la allure-report/
+          
+          # Copy history for next run (from the awesome subdir if it exists)
+          mkdir -p allure-report/awesome/history 2>/dev/null || true
+          cp -r allure-results/history/* allure-report/awesome/history/ 2>/dev/null || true
 
       - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
