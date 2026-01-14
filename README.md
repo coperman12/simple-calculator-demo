@@ -1,6 +1,10 @@
-# Simple Calculator App
-
-A basic Python calculator to demonstrate simple CI/CD concepts with GitHub Actions.
+<div align="center">
+  <img src="assets/logo.png" alt="Calculator Robot" width="400">
+  
+  # Simple Calculator App
+  
+  A basic Python calculator to demonstrate simple CI/CD concepts with GitHub Actions.
+</div>
 
 ## Features
 
@@ -55,6 +59,8 @@ This table shows what the calculator can do and explains each feature simply:
 | **Division Safety** | Won't let you divide by zero (that breaks math!) | Raises `ValueError` if `b == 0` | ✅ Done |
 | **Interactive Mode** | Type in your own math problems | Command-line interface with input prompts | ✅ Done |
 | **Unit Tests** | Automatic checking that everything works | 5 test cases using `unittest` | ✅ Done |
+| **AI Instructions** | Helps AI assistants understand the project rules | `.copilot-instructions.md` with project guidelines | ✅ Done |
+| **Logo** | A friendly calculator robot mascot | Image in `assets/logo.png` displayed at top of README | ✅ Done |
 
 ## Quick Start
 
