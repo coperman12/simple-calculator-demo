@@ -69,6 +69,7 @@ This table shows what the calculator can do and explains each feature simply:
 | **Allure Reporting** | Enterprise test reporting with trends & history | Track test quality over time, detect flaky tests | ✅ Done |
 | **CI/CD Pipeline** | GitHub Actions automatically runs tests & publishes reports | Multi-layer caching (3x faster!), gh-pages history | ✅ Done |
 | **Comprehensive Docs** | 7 documentation files explaining everything | ARCHITECTURE.md has complete system overview | ✅ Done |
+| **Contributors Recognition** | Acknowledges AI tools that helped build this project | All-contributors system with GitHub Copilot & Claude Code | ✅ Done |
 
 ## Quick Start
 
