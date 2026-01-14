@@ -62,6 +62,7 @@ This table shows what the calculator can do and explains each feature simply:
 | **AI Instructions** | Helps AI assistants understand the project rules | `.copilot-instructions.md` with project guidelines | ✅ Done |
 | **Logo** | A friendly calculator robot mascot | Image in `assets/logo.png` displayed at top of README | ✅ Done |
 | **Git Ignore** | Keeps temporary and personal files out of Git | `.gitignore` blocks Python cache, IDE settings, etc. | ✅ Done |
+| **Main Branch** | Uses "main" instead of "master" for the default branch | Modern Git convention, set via GitHub CLI | ✅ Done |
 
 ## Quick Start
 
