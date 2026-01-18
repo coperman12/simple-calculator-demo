@@ -52,11 +52,6 @@ This table shows what the calculator can do and explains each feature simply:
 
 | Feature | Simple Explanation | Tech Details | Status |
 |---------|-------------------|--------------|--------|
-| **Add** | Puts two numbers together (5 + 3 = 8) | `add(a, b)` returns `a + b` | ✅ Done |
-| **Subtract** | Takes one number away from another (10 - 4 = 6) | `subtract(a, b)` returns `a - b` | ✅ Done |
-| **Multiply** | Adding a number to itself many times (3 × 4 = 12) | `multiply(a, b)` returns `a * b` | ✅ Done |
-| **Divide** | Splitting a number into equal parts (15 ÷ 3 = 5) | `divide(a, b)` returns `a / b` | ✅ Done |
-| **Division Safety** | Won't let you divide by zero (that breaks math!) | Raises `ValueError` if `b == 0` | ✅ Done |
 | **Interactive Mode** | Type in your own math problems | Command-line interface with input prompts | ✅ Done |
 | **pytest Testing** | Modern test framework with simple syntax | 5 test cases using `pytest` with fixtures | ✅ Done |
 | **AI Instructions** | Helps AI assistants understand the project rules | `.copilot-instructions.md` with project guidelines | ✅ Done |
@@ -172,6 +167,62 @@ This project uses GitHub Actions for continuous integration:
 - **Automated Testing**: Runs unit tests on every push and pull request
 - **Multi-Python Support**: Tests against Python 3.8, 3.9, 3.10, and 3.11
 - **Simple Workflow**: Just pushes trigger the pipeline automatically
+
+### How It Works (Simple Version)
+
+Think of it like a **robot assembly line**:
+1. 📝 You push code to GitHub
+2. 🤖 Robot wakes up and runs all tests
+3. 📊 Creates a beautiful report
+4. 🌐 Publishes it to the internet
+5. 🔗 Gives you a link to share!
+
+### The Complete Process
+
+```mermaid
+flowchart TD
+    Start[👨‍💻 Push Code to GitHub] --> Trigger[🚀 GitHub Actions Triggered]
+    
+    Trigger --> Job1[📦 Job 1: Test & Build]
+    
+    subgraph TestJob["Test & Build Report"]
+        Setup[⚙️ Setup Environment<br/>Python + Node.js + Dependencies] --> RunTests[🧪 Run Tests with pytest]
+        RunTests --> Results[📁 Generate allure-results/]
+        
+        Results --> GetHistory[📚 Fetch History from gh-pages]
+        GetHistory --> MergeHistory[🔄 Merge with Previous History]
+        
+        MergeHistory --> GenReport[📊 Generate Allure 3 Report<br/>with Trends & History]
+        GenReport --> Upload[⬆️ Upload Report Artifact]
+    end
+    
+    Job1 --> TestJob
+    TestJob --> Job2{🌐 Deploy?}
+    
+    Job2 -->|main branch only| Deploy[📤 Job 2: Deploy to GitHub Pages]
+    Job2 -->|PR| Skip[⏭️ Skip Deploy<br/>Report in Artifacts]
+    
+    Deploy --> Configure[⚙️ Configure Pages]
+    Configure --> Publish[🚀 Publish to gh-pages]
+    Publish --> Live[✅ Live Report at GitHub Pages URL]
+    
+    Live --> Share[🔗 https://username.github.io/repo/]
+    
+    Skip --> ViewArtifact[👀 View in Actions Artifacts]
+    
+    style Start fill:#e1f5ff
+    style Live fill:#d4edda
+    style Share fill:#d4edda
+    style TestJob fill:#fff3cd
+    style Deploy fill:#f8d7da
+```
+
+**What This Means**:
+- **Automatic**: Happens on every push, no manual work needed
+- **Fast**: Multi-layer caching makes it run in ~15 seconds (3x faster!)
+- **Historical**: Tracks trends over time, detects flaky tests
+- **Free**: GitHub provides hosting and automation for free
+- **Shareable**: Anyone can view your test reports via URL
 
 ## Project Structure
 
