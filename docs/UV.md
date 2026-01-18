@@ -122,9 +122,9 @@ Notice: Just add `uv` before `pip` commands! That's it!
 
 ## What We Did
 
-✅ Created `pyproject.toml` with all project metadata  
-✅ Moved pytest config from `pytest.ini` to `pyproject.toml` (less files!)  
-✅ Kept `requirements.txt` for backward compatibility  
-✅ Documented everything clearly  
+✅ Created `pyproject.toml` with all project metadata
+✅ Moved pytest config from `pytest.ini` to `pyproject.toml` (less files!)
+✅ Kept `requirements.txt` for backward compatibility
+✅ Documented everything clearly
 
 Now you can use either `pip` (traditional) or `uv` (modern fast way)!

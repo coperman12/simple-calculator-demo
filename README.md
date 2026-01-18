@@ -1,8 +1,8 @@
 <div align="center">
   <img src="assets/logo.png" alt="Calculator Robot" width="400">
-  
+
   # Simple Calculator App
-  
+
   A basic Python calculator to demonstrate simple CI/CD concepts with GitHub Actions.
 </div>
 
@@ -27,7 +27,7 @@ Here's how the pieces fit together:
 flowchart TD
     User[You] -->|Give numbers + operation| Calculator
     Calculator -->|Returns answer| User
-    
+
     subgraph CalculatorBrain[Calculator Brain]
         Add[Add Numbers]
         Subtract[Subtract Numbers]
@@ -35,12 +35,12 @@ flowchart TD
         Divide[Divide Numbers]
         SafetyCheck[Division Safety Check]
     end
-    
+
     Calculator --> CalculatorBrain
     Divide --> SafetyCheck
 ```
 
-**What This Means**: 
+**What This Means**:
 - You give the calculator two numbers and tell it what to do
 - The calculator has a "brain" (the Calculator class) with different skills
 - Each skill does one thing really well
@@ -66,6 +66,7 @@ This table shows what the calculator can do and explains each feature simply:
 | **GitHub Pages** | Free website hosting - anyone can see your test reports! | gh-pages branch serves Allure reports automatically | ✅ Done |
 | **Comprehensive Docs** | 8 documentation files explaining everything | ARCHITECTURE.md has complete system overview | ✅ Done |
 | **Contributors Recognition** | Acknowledges AI tools that helped build this project | All-contributors system with GitHub Copilot & Claude Code | ✅ Done |
+| **Pre-commit Hooks** | Code quality & security checks before every commit | Gitleaks (secrets), Ruff (linting), file validation + CI integration | ✅ Done |
 
 ## Quick Start
 
@@ -110,14 +111,45 @@ pytest -v              # Verbose output
 pytest --cov           # With coverage report
 ```
 
-After running tests, check `reports/test-report.html` for a quick visual report!  
-Or use Allure for enterprise-level reporting with trends 📊  
+After running tests, check `reports/test-report.html` for a quick visual report!
+Or use Allure for enterprise-level reporting with trends 📊
 
-**Automated CI/CD**: Every push to `main` automatically runs tests and publishes Allure reports to GitHub Pages with history tracking!  
+**Automated CI/CD**: Every push to `main` automatically runs tests and publishes Allure reports to GitHub Pages with history tracking!
 
 📊 **Live Report**: https://guitaristforever.github.io/simple-calculator-demo/
 
 See [`docs/ALLURE.md`](docs/ALLURE.md), [`docs/CI-CD.md`](docs/CI-CD.md), and [`docs/GITHUB-PAGES.md`](docs/GITHUB-PAGES.md) for details.
+
+## Pre-commit Hooks
+
+**Simple Explanation**: Think of pre-commit hooks as airport security for your code - they check everything before it "boards the plane" (gets committed). They catch secrets, fix formatting, and ensure quality automatically!
+
+**Setup** (one-time):
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+**Usage**: Hooks run automatically on every commit! Or run manually:
+```bash
+pre-commit run --all-files
+```
+
+### What's Protected
+
+| Hook | What It Does |
+|------|-------------|
+| 🔒 Gitleaks | Prevents committing secrets/API keys |
+| 🐍 Ruff Linter | Checks Python code quality |
+| 🎨 Ruff Formatter | Auto-formats Python code |
+| ✂️ Whitespace | Removes trailing spaces |
+| 📝 End-of-file | Ensures files end with newline |
+| 📦 Import Sort | Organizes Python imports |
+| 🔑 Private Keys | Detects SSH/SSL keys |
+| 📦 Large Files | Prevents files >500KB |
+| 🔀 Merge Conflicts | Catches conflict markers |
+
+**Tech Details**: Pre-commit runs security checks (gitleaks), Python linting (ruff), and file validation automatically. Also runs in CI via GitHub Actions to ensure all commits are clean!
 
 ## Usage Examples
 
@@ -131,7 +163,7 @@ calc = Calculator()
 # Addition
 result = calc.add(5, 3)        # Returns: 8
 
-# Subtraction  
+# Subtraction
 result = calc.subtract(10, 4)  # Returns: 6
 
 # Multiplication
@@ -182,34 +214,34 @@ Think of it like a **robot assembly line**:
 ```mermaid
 flowchart TD
     Start[👨‍💻 Push Code to GitHub] --> Trigger[🚀 GitHub Actions Triggered]
-    
+
     Trigger --> Job1[📦 Job 1: Test & Build]
-    
+
     subgraph TestJob["Test & Build Report"]
         Setup[⚙️ Setup Environment<br/>Python + Node.js + Dependencies] --> RunTests[🧪 Run Tests with pytest]
         RunTests --> Results[📁 Generate allure-results/]
-        
+
         Results --> GetHistory[📚 Fetch History from gh-pages]
         GetHistory --> MergeHistory[🔄 Merge with Previous History]
-        
+
         MergeHistory --> GenReport[📊 Generate Allure 3 Report<br/>with Trends & History]
         GenReport --> Upload[⬆️ Upload Report Artifact]
     end
-    
+
     Job1 --> TestJob
     TestJob --> Job2{🌐 Deploy?}
-    
+
     Job2 -->|main branch only| Deploy[📤 Job 2: Deploy to GitHub Pages]
     Job2 -->|PR| Skip[⏭️ Skip Deploy<br/>Report in Artifacts]
-    
+
     Deploy --> Configure[⚙️ Configure Pages]
     Configure --> Publish[🚀 Publish to gh-pages]
     Publish --> Live[✅ Live Report at GitHub Pages URL]
-    
+
     Live --> Share[🔗 https://username.github.io/repo/]
-    
+
     Skip --> ViewArtifact[👀 View in Actions Artifacts]
-    
+
     style Start fill:#e1f5ff
     style Live fill:#d4edda
     style Share fill:#d4edda
@@ -257,9 +289,9 @@ flowchart TD
 └── README.md               # 👋 This file
 ```
 
-**Why this structure?** Each type of file has its own home - code, tests, docs, and media are all separated. Makes it easy to find things as the project grows! 
+**Why this structure?** Each type of file has its own home - code, tests, docs, and media are all separated. Makes it easy to find things as the project grows!
 
-**Want the full picture?** See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the complete system overview!  
+**Want the full picture?** See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the complete system overview!
 **Just folder details?** See [`docs/STRUCTURE.md`](docs/STRUCTURE.md)
 
 ## Contributing

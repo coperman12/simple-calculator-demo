@@ -167,13 +167,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
           cache: 'pip'
-      
+
       - name: Install and test
         run: |
           pip install -r requirements.txt
@@ -384,11 +384,11 @@ When workflow fails, check:
 
 Workflow is working when you see:
 
-✅ All steps green  
-✅ "5 passed" in test output  
-✅ Allure report generated  
-✅ Deployed to gh-pages  
-✅ Report accessible at GitHub Pages URL  
+✅ All steps green
+✅ "5 passed" in test output
+✅ Allure report generated
+✅ Deployed to gh-pages
+✅ Report accessible at GitHub Pages URL
 
 ---
 

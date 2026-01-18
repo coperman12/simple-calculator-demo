@@ -143,7 +143,7 @@ test_multiply: 0.001s  🟢 Fast
 **Duration Trends**:
 ```
 Test Suite Duration:
-0.20s  
+0.20s
 0.15s  ●─────●─────●
 0.10s
        Run1  Run2  Run3
@@ -279,10 +279,10 @@ def test_something():
 
 ## Why Both pytest-html AND Allure?
 
-**pytest-html**: Quick, simple, instant feedback (1 command)  
+**pytest-html**: Quick, simple, instant feedback (1 command)
 **Allure**: Professional, detailed, trends (uses npx)
 
-Use **pytest-html** for quick checks during development.  
+Use **pytest-html** for quick checks during development.
 Use **Allure** for demos, presentations, and tracking quality over time.
 
 ## Pro Tips

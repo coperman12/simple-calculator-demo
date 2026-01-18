@@ -11,7 +11,7 @@ Think of it like having a **robot assistant** that:
 4. 🌐 Publishes them online
 5. 📈 Tracks history over time
 
-**Without CI/CD**: You manually run tests, create reports, share them  
+**Without CI/CD**: You manually run tests, create reports, share them
 **With CI/CD**: Robot does it all automatically every time you push code!
 
 ## Our Setup: Tests with Allure 3 History
@@ -33,11 +33,11 @@ flowchart LR
     Push[Push Code] --> GHA[GitHub Actions]
     GHA --> Test[Run Tests]
     Test --> Results[allure-results/]
-    
+
     GHPages[gh-pages branch] --> History[Previous History]
     History --> Merge[Merge with New Results]
     Results --> Merge
-    
+
     Merge --> Report[Beautiful Report]
     Report --> Publish[Publish to gh-pages]
     Publish --> URL[Live URL!]
@@ -113,7 +113,7 @@ key: ${{ runner.os }}-pytest-${{ hashFiles('tests/**/*.py') }}
 - Speeds up test collection
 - Only invalidates when test files change
 
-**Result**: 
+**Result**:
 - **First run**: ~45s (installs everything)
 - **Cached runs**: ~15s (uses cached packages!)
 - **3x faster!** 🚀

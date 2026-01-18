@@ -1,7 +1,7 @@
 # .gitignore - Keeps the messy stuff out of Git! 🧹
 
 # Why do we need this?
-# Git tracks every file by default. But some files are temporary, personal, 
+# Git tracks every file by default. But some files are temporary, personal,
 # or machine-generated - we don't want to share those with the team!
 # Think of it like: "Don't pack your dirty laundry when visiting friends"
 

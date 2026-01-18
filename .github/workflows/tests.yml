@@ -19,10 +19,27 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Job 1: Run tests and build report
-  test:
+  # Job 1: Pre-commit hooks (code quality & security)
+  pre-commit:
     runs-on: ubuntu-latest
-    
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Run pre-commit hooks
+        uses: pre-commit/action@v3.0.1
+
+  # Job 2: Run tests and build report
+  test:
+    needs: pre-commit
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -84,17 +101,17 @@ jobs:
         with:
           path: allure-history
 
-  # Job 2: Deploy to GitHub Pages (official action)
+  # Job 3: Deploy to GitHub Pages (official action)
   deploy-github-pages:
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    
+
     runs-on: ubuntu-latest
-    
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    
+
     steps:
       - name: Setup Pages
         uses: actions/configure-pages@v5
