@@ -1,60 +1,139 @@
-# Pre-commit Hooks - Automatically check code before committing
+# ============================================================================
+# PRE-COMMIT HOOKS CONFIGURATION
+# ============================================================================
 #
-# 🚀 Setup: pip install pre-commit && pre-commit install
-# 🔧 Usage: pre-commit run --all-files
-# 📚 Docs:  https://pre-commit.com
+# 🎯 What is this?
+# Pre-commit hooks automatically check your code BEFORE you commit.
+# Think of them as quality control inspectors that catch issues early!
+#
+# 🚀 Installation:
+#   1. Install pre-commit: pip install pre-commit
+#   2. Install the hooks:   pre-commit install
+#   3. Done! Hooks will run automatically on every commit
+#
+# 🔧 Manual Usage:
+#   - Run on all files:        pre-commit run --all-files
+#   - Run specific hook:       pre-commit run <hook-id>
+#   - Skip hooks (emergency):  git commit --no-verify
+#
+# 💡 What These Hooks Do:
+#   ✅ Prevent secrets/passwords from being committed
+#   ✅ Lint and format Python code automatically
+#   ✅ Fix common file issues (whitespace, line endings)
+#   ✅ Validate YAML, JSON, and other file formats
+#   ✅ Prevent large files and merge conflicts
+#
+# ============================================================================
 
 repos:
-  # Security - Detect secrets and private keys
+  # ============================================================================
+  # SECURITY CHECKS
+  # ============================================================================
+
+  # Gitleaks - Scans for secrets, passwords, and API keys
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.21.2
     hooks:
       - id: gitleaks
-        name: 🔒 Detect secrets
+        name: 🔒 Detect hardcoded secrets
+        description: Scans for passwords, API keys, and other sensitive data
 
-  # Python - Lint and format code
+  # ============================================================================
+  # PYTHON CODE QUALITY
+  # ============================================================================
+
+  # Ruff - Fast Python linter and formatter
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.4
     hooks:
       - id: ruff
         name: 🐍 Ruff linter
-        args: [--fix]
+        description: Fast Python linter (checks code quality)
+        args: [--fix]  # Automatically fix issues when possible
       - id: ruff-format
         name: 🎨 Ruff formatter
+        description: Format Python code for consistency
 
-  # Files - Fix whitespace, line endings, and syntax
+  # ============================================================================
+  # GENERAL FILE CHECKS
+  # ============================================================================
+
+  # Pre-commit's built-in hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
+      # Fix common file issues
       - id: trailing-whitespace
         name: ✂️  Remove trailing whitespace
+        description: Removes unnecessary spaces at end of lines
+
       - id: end-of-file-fixer
         name: 📝 Fix end of files
+        description: Ensures files end with a newline
+
       - id: check-yaml
-        name: 📋 Check YAML
+        name: 📋 Check YAML syntax
+        description: Validates YAML files
+
       - id: check-json
-        name: 📋 Check JSON
+        name: 📋 Check JSON syntax
+        description: Validates JSON files
+
       - id: check-toml
-        name: 📋 Check TOML
+        name: 📋 Check TOML syntax
+        description: Validates TOML files (like pyproject.toml)
+
       - id: check-added-large-files
         name: 📦 Check for large files
+        description: Prevents accidentally committing large files
         args: ['--maxkb=500']
+
       - id: check-merge-conflict
-        name: 🔀 Check merge conflicts
+        name: 🔀 Check for merge conflicts
+        description: Detects merge conflict markers
+
       - id: detect-private-key
         name: 🔑 Detect private keys
+        description: Prevents committing private SSH/SSL keys
+
       - id: mixed-line-ending
         name: 📄 Fix line endings
+        description: Ensures consistent line endings (LF)
         args: ['--fix=lf']
-      - id: check-case-conflict
-        name: 🔤 Check filename cases
-      - id: check-docstring-first
-        name: 📚 Check docstrings
 
-  # Python - Sort imports
+      - id: check-case-conflict
+        name: 🔤 Check filename case conflicts
+        description: Prevents case-sensitive filename issues
+
+      - id: check-docstring-first
+        name: 📚 Check docstring position
+        description: Ensures docstrings come before code in Python files
+
+  # ============================================================================
+  # PYTHON IMPORTS
+  # ============================================================================
+
+  # isort - Sorts and organizes Python imports
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
       - id: isort
         name: 📦 Sort imports
+        description: Organizes Python imports alphabetically
         args: ["--profile", "black"]
+
+# ============================================================================
+# CONFIGURATION NOTES
+# ============================================================================
+#
+# 🔧 Customize hook behavior:
+#   - Exclude files: add 'exclude: ^path/to/exclude/'
+#   - Skip specific hooks: add hook id to SKIP env var
+#   - Adjust ruff rules in pyproject.toml
+#
+# 📚 Learn more:
+#   - Pre-commit docs: https://pre-commit.com
+#   - Ruff docs: https://docs.astral.sh/ruff
+#   - Gitleaks docs: https://github.com/gitleaks/gitleaks
+#
+# ============================================================================
