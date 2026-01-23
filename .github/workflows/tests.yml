@@ -20,11 +20,11 @@ concurrency:
 
 jobs:
   # ┌─────────────────────────────────────────────────────────────┐
-  # │                    PARALLEL JOBS                            │
-  # │         lint, test, and security run simultaneously         │
+  # │                 STAGE 1: PARALLEL                           │
+  # │            lint and security run simultaneously             │
   # └─────────────────────────────────────────────────────────────┘
 
-  # Job 1: Lint & Code Quality (runs in parallel)
+  # Job 1: Lint & Code Quality
   lint:
     name: 🔍 Lint
     runs-on: ubuntu-latest
@@ -63,10 +63,10 @@ jobs:
             echo "Run \`pre-commit run --all-files\` locally to fix." >> $GITHUB_STEP_SUMMARY
           fi
 
-  # Job 2: Tests & Coverage (runs after lint)
+  # Job 2: Tests & Coverage (runs after lint & security)
   test:
     name: 🧪 Test
-    needs: [lint]
+    needs: [lint, security]
     runs-on: ubuntu-latest
 
     steps:
@@ -119,7 +119,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "✅ **All tests passed with coverage ≥80%**" >> $GITHUB_STEP_SUMMARY
 
-  # Job 3: Security Scanning (runs in parallel)
+  # Job 3: Security Scanning
   security:
     name: 🔒 Security
     runs-on: ubuntu-latest
@@ -163,11 +163,11 @@ jobs:
           echo "| Gitleaks | Secrets detection | ✅ (via pre-commit) |" >> $GITHUB_STEP_SUMMARY
 
   # ┌─────────────────────────────────────────────────────────────┐
-  # │                    SEQUENTIAL JOBS                          │
-  # │          These wait for all parallel jobs to complete       │
+  # │                 STAGE 2: SEQUENTIAL                         │
+  # │              test → report → deploy                         │
   # └─────────────────────────────────────────────────────────────┘
 
-  # Job 4: Build Allure Report (waits for test job)
+  # Job 4: Build Allure Report
   report:
     name: 📊 Report
     needs: [test]
@@ -205,10 +205,10 @@ jobs:
         with:
           path: allure-history
 
-  # Job 5: Deploy to GitHub Pages (waits for ALL jobs)
+  # Job 5: Deploy to GitHub Pages (waits for report)
   deploy:
     name: 🚀 Deploy
-    needs: [lint, test, security, report]
+    needs: [report]
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
 
