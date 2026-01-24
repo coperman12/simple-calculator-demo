@@ -1,47 +1,126 @@
+# ╔═══════════════════════════════════════════════════════════════════════════╗
+# ║                     🚀 CI/CD PIPELINE - LEARNING GUIDE                     ║
+# ╠═══════════════════════════════════════════════════════════════════════════╣
+# ║  This file defines what happens when you push code to GitHub.             ║
+# ║                                                                           ║
+# ║  🎯 WHAT THIS FILE DOES:                                                  ║
+# ║  1. Runs code quality checks (linting)                                    ║
+# ║  2. Runs security scans                                                   ║
+# ║  3. Runs your tests with coverage                                         ║
+# ║  4. Generates a beautiful test report                                     ║
+# ║  5. Publishes the report to the internet                                  ║
+# ║                                                                           ║
+# ║  📚 KEY CONCEPTS:                                                         ║
+# ║  - "jobs" = Independent tasks that can run in parallel                    ║
+# ║  - "steps" = Sequential commands within a job                             ║
+# ║  - "needs" = Makes a job wait for other jobs to finish                    ║
+# ║  - "if: always()" = Run even if previous steps failed                     ║
+# ║                                                                           ║
+# ║  ⏱️  TOTAL TIME: ~2-3 minutes (parallel jobs save time!)                  ║
+# ╚═══════════════════════════════════════════════════════════════════════════╝
+
 name: 🚀 CI Pipeline
 
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ TRIGGERS: When does this workflow run?                                      │
+# │                                                                             │
+# │ 💡 WHY THESE TRIGGERS?                                                      │
+# │ - push to main: Ensures main branch is always tested                        │
+# │ - pull_request: Tests changes BEFORE they're merged (catch bugs early!)     │
+# │ - workflow_dispatch: Lets you run manually from GitHub UI (for debugging)   │
+# └─────────────────────────────────────────────────────────────────────────────┘
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:  # Click "Run workflow" button in GitHub Actions tab
 
-# Sets permissions of the GITHUB_TOKEN
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ PERMISSIONS: What can this workflow do?                                     │
+# │                                                                             │
+# │ 💡 WHY PERMISSIONS MATTER:                                                  │
+# │ - Security: Limits what the workflow can access (principle of least access) │
+# │ - contents:read = Can read your code (needed to run tests)                  │
+# │ - pages:write = Can publish to GitHub Pages (for test reports)              │
+# │ - id-token:write = Needed for secure GitHub Pages deployment                │
+# │                                                                             │
+# │ ⚠️  WITHOUT THESE: Workflow would fail with "permission denied" errors      │
+# └─────────────────────────────────────────────────────────────────────────────┘
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ CONCURRENCY: Prevent race conditions                                        │
+# │                                                                             │
+# │ 💡 WHY THIS MATTERS:                                                        │
+# │ - Imagine 2 deploys running at the same time → corrupted website!           │
+# │ - group: "pages" = All deploys share this "lock"                            │
+# │ - cancel-in-progress: false = Let running deploys finish (don't interrupt)  │
+# │                                                                             │
+# │ 🎯 REAL-WORLD ANALOGY:                                                      │
+# │ Like a bathroom lock - only one person at a time!                           │
+# └─────────────────────────────────────────────────────────────────────────────┘
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # ┌─────────────────────────────────────────────────────────────┐
-  # │                 STAGE 1: PARALLEL                           │
-  # │            lint and security run simultaneously             │
-  # └─────────────────────────────────────────────────────────────┘
+  # ╔═════════════════════════════════════════════════════════════════════════╗
+  # ║                        STAGE 1: PARALLEL JOBS                           ║
+  # ║                                                                         ║
+  # ║  These jobs have NO "needs:" so they start SIMULTANEOUSLY!              ║
+  # ║                                                                         ║
+  # ║  ┌─────────┐         ┌──────────┐                                       ║
+  # ║  │ 🔍 Lint │         │🔒Security│    ← Both start at the same time      ║
+  # ║  └─────────┘         └──────────┘                                       ║
+  # ║                                                                         ║
+  # ║  💡 WHY PARALLEL?                                                       ║
+  # ║  - Lint and Security don't depend on each other                         ║
+  # ║  - Running together saves ~30 seconds vs sequential                     ║
+  # ║  - Each gets its own fresh virtual machine (runner)                     ║
+  # ╚═════════════════════════════════════════════════════════════════════════╝
 
-  # Job 1: Lint & Code Quality
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ JOB 1: LINT - Code Quality Checks                                       │
+  # │                                                                         │
+  # │ 💡 WHY LINT?                                                            │
+  # │ - Catches bugs before tests even run (faster feedback)                  │
+  # │ - Enforces consistent code style across the team                        │
+  # │ - Prevents "works on my machine" issues                                 │
+  # │                                                                         │
+  # │ 🎯 WHAT IT CHECKS:                                                      │
+  # │ - Ruff: Python errors, unused imports, security issues                  │
+  # │ - Formatting: Consistent code style                                     │
+  # │ - File validation: YAML syntax, trailing whitespace                     │
+  # └─────────────────────────────────────────────────────────────────────────┘
   lint:
     name: 🔍 Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Use GitHub's free Linux servers
 
     steps:
+      # Step 1: Get your code onto the runner
+      # Without this, the runner has an empty folder!
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Step 2: Install Python
+      # The runner has Python, but we want a specific version
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
+      # Step 3: Run the same pre-commit hooks that run locally
+      # This ensures CI matches your local development
       - name: Run pre-commit hooks
-        id: precommit
+        id: precommit  # This ID lets us check the result later
         uses: pre-commit/action@v3.0.1
 
+      # Step 4: Create a nice summary in the GitHub Actions UI
+      # "if: always()" means this runs even if pre-commit failed
       - name: Generate summary
         if: always()
         run: |
@@ -63,68 +142,18 @@ jobs:
             echo "Run \`pre-commit run --all-files\` locally to fix." >> $GITHUB_STEP_SUMMARY
           fi
 
-  # Job 2: Tests & Coverage (runs after lint & security)
-  test:
-    name: 🧪 Test
-    needs: [lint, security]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-          cache: 'pip'
-          cache-dependency-path: 'requirements.txt'
-
-      - name: Cache pip packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run tests with coverage
-        id: test-step
-        run: |
-          pytest --cov=calculator --cov-report=xml --cov-report=term --cov-fail-under=80 --alluredir=allure-results -v
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage.xml
-          fail_ci_if_error: false
-          token: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: allure-results
-          path: allure-results
-          retention-days: 5
-
-      - name: Generate summary
-        if: always()
-        run: |
-          echo "## 🧪 Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.test-step.outcome }}" == "success" ]; then
-            echo "✅ **All tests passed with coverage ≥80%**" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "❌ **Tests failed or coverage below 80%**" >> $GITHUB_STEP_SUMMARY
-          fi
-
-  # Job 3: Security Scanning
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ JOB 2: SECURITY - Find Vulnerabilities                                  │
+  # │                                                                         │
+  # │ 💡 WHY SECURITY SCANNING?                                               │
+  # │ - Catches security issues before hackers do                             │
+  # │ - Checks your CODE (Bandit) and DEPENDENCIES (Safety)                   │
+  # │ - Runs in parallel with lint (no "needs:")                              │
+  # │                                                                         │
+  # │ 🔍 WHAT IT CHECKS:                                                      │
+  # │ - Bandit: SQL injection, hardcoded passwords, exec() calls              │
+  # │ - Safety: Known vulnerabilities in your pip packages                    │
+  # └─────────────────────────────────────────────────────────────────────────┘
   security:
     name: 🔒 Security
     runs-on: ubuntu-latest
@@ -138,17 +167,22 @@ jobs:
         with:
           python-version: '3.9'
 
+      # Install security scanning tools (not in requirements.txt - CI only)
       - name: Install security tools
         run: |
           python -m pip install --upgrade pip
           pip install bandit safety
 
+      # Bandit scans your Python code for security issues
+      # -ll = only show medium+ severity, -ii = only high+ confidence
       - name: Run Bandit (code security)
         id: bandit
         run: |
           bandit -r calculator/ -f json -o bandit-report.json || true
           bandit -r calculator/ -ll -ii
 
+      # Safety checks if your dependencies have known vulnerabilities
+      # continue-on-error: true = don't fail the whole pipeline for warnings
       - name: Run Safety (dependency check)
         id: safety
         continue-on-error: true
@@ -167,35 +201,157 @@ jobs:
           echo "| Safety | Dependency vulnerabilities | ✅ |" >> $GITHUB_STEP_SUMMARY
           echo "| Gitleaks | Secrets detection | ✅ (via pre-commit) |" >> $GITHUB_STEP_SUMMARY
 
-  # ┌─────────────────────────────────────────────────────────────┐
-  # │                 STAGE 2: SEQUENTIAL                         │
-  # │              test → report → deploy                         │
-  # └─────────────────────────────────────────────────────────────┘
+  # ╔═════════════════════════════════════════════════════════════════════════╗
+  # ║                       STAGE 2: SEQUENTIAL JOBS                          ║
+  # ║                                                                         ║
+  # ║  These jobs use "needs:" so they wait for previous jobs!                ║
+  # ║                                                                         ║
+  # ║       [lint] ──┐                                                        ║
+  # ║                ├──→ [test] ──→ [report] ──→ [deploy]                    ║
+  # ║   [security] ──┘                                                        ║
+  # ║                                                                         ║
+  # ║  💡 WHY SEQUENTIAL?                                                     ║
+  # ║  - No point running tests if linting fails                              ║
+  # ║  - No point generating reports if tests fail                            ║
+  # ║  - Saves compute time (and money on private repos!)                     ║
+  # ╚═════════════════════════════════════════════════════════════════════════╝
 
-  # Job 4: Build Allure Report
-  report:
-    name: 📊 Report
-    needs: [test]
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ JOB 3: TEST - Run Tests with Coverage                                   │
+  # │                                                                         │
+  # │ 💡 WHY "needs: [lint, security]"?                                       │
+  # │ - This job WAITS for both lint and security to finish                   │
+  # │ - If either fails, this job is skipped (why run tests on bad code?)     │
+  # │                                                                         │
+  # │ 📊 COVERAGE EXPLAINED:                                                  │
+  # │ - --cov=calculator = Measure which lines of code are tested             │
+  # │ - --cov-fail-under=80 = FAIL if less than 80% of code is tested         │
+  # │ - 80% is arbitrary - teams choose 70-90% typically                      │
+  # │                                                                         │
+  # │ ⚠️  100% COVERAGE ≠ BUG-FREE CODE!                                      │
+  # │ You can have 100% coverage with bad tests. Coverage just means          │
+  # │ "this line ran" not "this line is correct."                             │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  test:
+    name: 🧪 Test
+    needs: [lint, security]  # ← WAIT for both jobs before starting
     runs-on: ubuntu-latest
-    if: always()
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # ┌───────────────────────────────────────────────────────────────────┐
+      # │ CACHING EXPLAINED                                                 │
+      # │                                                                   │
+      # │ 💡 WHY CACHE?                                                     │
+      # │ - pip install downloads packages from the internet (slow!)        │
+      # │ - Caching saves them for next time (fast!)                        │
+      # │ - First run: ~45 seconds. Cached run: ~15 seconds. 3x faster!     │
+      # │                                                                   │
+      # │ 🔑 HOW THE CACHE KEY WORKS:                                       │
+      # │ - key: Linux-pip-abc123 (hash of requirements.txt)                │
+      # │ - If requirements.txt changes → new hash → fresh download         │
+      # │ - If unchanged → reuse cached packages                            │
+      # └───────────────────────────────────────────────────────────────────┘
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: 'pip'  # Built-in pip caching
+          cache-dependency-path: 'requirements.txt'
+
+      # Additional cache layer for pip's download cache
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # The main event: run tests!
+      # id: test-step lets us check if tests passed/failed later
+      - name: Run tests with coverage
+        id: test-step
+        run: |
+          pytest --cov=calculator --cov-report=xml --cov-report=term --cov-fail-under=80 --alluredir=allure-results -v
+
+      # Upload coverage to Codecov (external service for tracking trends)
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false  # Don't fail if Codecov is down
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      # Save test results for the report job
+      # Artifacts = files that persist after the job ends
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()  # Upload even if tests failed (so we can see what broke)
+        with:
+          name: allure-results
+          path: allure-results
+          retention-days: 5  # Delete after 5 days to save storage
+
+      # Show pass/fail in GitHub's UI
+      - name: Generate summary
+        if: always()
+        run: |
+          echo "## 🧪 Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.test-step.outcome }}" == "success" ]; then
+            echo "✅ **All tests passed with coverage ≥80%**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Tests failed or coverage below 80%**" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ JOB 4: REPORT - Generate Beautiful Test Reports                         │
+  # │                                                                         │
+  # │ 💡 WHY A SEPARATE JOB?                                                  │
+  # │ - Report generation is slow (~30 seconds)                               │
+  # │ - Even if tests fail, we want to see the report                         │
+  # │ - "if: always()" ensures this runs regardless of test outcome           │
+  # │                                                                         │
+  # │ 📊 ALLURE FEATURES:                                                     │
+  # │ - Tracks test history over time (see trends!)                           │
+  # │ - Shows which tests are "flaky" (sometimes pass, sometimes fail)        │
+  # │ - Generates beautiful HTML reports anyone can view                      │
+  # └─────────────────────────────────────────────────────────────────────────┘
+  report:
+    name: 📊 Report
+    needs: [test]
+    runs-on: ubuntu-latest
+    if: always()  # Run even if tests failed - we still want the report!
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Download the test results saved by the test job
       - name: Download test results
         uses: actions/download-artifact@v4
         with:
           name: allure-results
           path: allure-results
 
+      # Get previous reports from gh-pages branch (for history/trends)
+      # continue-on-error: true = OK if gh-pages doesn't exist yet
       - name: Get Allure history
         uses: actions/checkout@v4
         continue-on-error: true
         with:
-          ref: gh-pages
+          ref: gh-pages  # The branch where we store old reports
           path: gh-pages
 
+      # Generate the HTML report with historical data
       - name: Generate Allure Report
         uses: simple-elf/allure-report-action@master
         with:
@@ -203,20 +359,33 @@ jobs:
           gh_pages: gh-pages
           allure_report: allure-report
           allure_history: allure-history
-          keep_reports: 20
+          keep_reports: 20  # Keep last 20 reports (delete older ones)
 
+      # Prepare the report for GitHub Pages deployment
       - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: allure-history
 
-  # Job 5: Deploy to GitHub Pages (waits for report)
+  # ┌─────────────────────────────────────────────────────────────────────────┐
+  # │ JOB 5: DEPLOY - Publish to GitHub Pages                                 │
+  # │                                                                         │
+  # │ 💡 WHY THIS CONDITIONAL?                                                │
+  # │ - github.ref == 'refs/heads/main' = Only deploy from main branch        │
+  # │ - github.event_name != 'pull_request' = Don't deploy PRs                │
+  # │                                                                         │
+  # │ 🎯 RESULT:                                                              │
+  # │ - PR opened → Tests run, but NO deploy (just preview)                   │
+  # │ - PR merged to main → Tests run AND deploy                              │
+  # │ - This prevents half-finished features from going live!                 │
+  # └─────────────────────────────────────────────────────────────────────────┘
   deploy:
     name: 🚀 Deploy
     needs: [report]
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
 
+    # Connect to GitHub Pages environment (shows deployment URL in GitHub UI)
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

@@ -118,7 +118,108 @@ allure-pytest==2.13.5
 
 ---
 
-#### 5. **Tests Fail in CI but Pass Locally**
+#### 5. **CodeQL Security Scan Fails**
+
+**Symptoms**:
+- CodeQL workflow shows "Requires authentication" error
+- Security tab shows no results
+
+**Solutions**:
+
+**A. Check permissions in workflow**:
+```yaml
+permissions:
+  actions: read        # Required for CodeQL
+  contents: read
+  security-events: write
+```
+
+**B. Verify CodeQL action version**:
+Use v4 (v3 is deprecated):
+```yaml
+uses: github/codeql-action/init@v4
+uses: github/codeql-action/analyze@v4
+```
+
+**C. Check repository settings**:
+1. Go to **Settings** → **Security** → **Code security and analysis**
+2. Enable **"CodeQL analysis"**
+
+---
+
+#### 6. **Codecov Upload Fails**
+
+**Symptoms**:
+- "Upload coverage to Codecov" step fails
+- Badge shows "unknown" or no data
+
+**Solutions**:
+
+**A. Check Codecov token**:
+1. Go to [codecov.io](https://codecov.io) and sign in
+2. Find your repository
+3. Copy the upload token
+4. Add to GitHub: **Settings** → **Secrets** → **CODECOV_TOKEN**
+
+**B. Verify coverage.xml exists**:
+```yaml
+- name: Debug coverage
+  run: ls -la coverage.xml
+```
+
+**C. Check pytest coverage flags**:
+```yaml
+pytest --cov=calculator --cov-report=xml
+```
+
+**D. Token not required for public repos**:
+For public repos, you can remove the token:
+```yaml
+- name: Upload coverage to Codecov
+  uses: codecov/codecov-action@v4
+  with:
+    files: ./coverage.xml
+    fail_ci_if_error: false
+    # token: not needed for public repos
+```
+
+---
+
+#### 7. **Coverage Below Threshold (80%)**
+
+**Symptoms**:
+- Tests pass but workflow fails
+- "FAIL Required test coverage of 80% not reached"
+
+**Solutions**:
+
+**A. Check what's not covered**:
+```bash
+# Run locally with HTML report
+pytest --cov=calculator --cov-report=html
+open htmlcov/index.html  # macOS
+# or: xdg-open htmlcov/index.html  # Linux
+```
+
+**B. Exclude non-testable code**:
+In `pyproject.toml`:
+```toml
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def main",
+    "if __name__ == .__main__.:",
+]
+```
+
+**C. Lower threshold temporarily** (not recommended):
+```yaml
+pytest --cov-fail-under=70  # Lower while fixing
+```
+
+---
+
+#### 8. **Tests Fail in CI but Pass Locally**
 
 **Symptoms**:
 - Tests pass on your machine
@@ -377,6 +478,9 @@ When workflow fails, check:
 - [ ] Actions are latest versions (@v4, @v5)
 - [ ] Logs reviewed for actual error
 - [ ] Simple version works first
+- [ ] CodeQL has `actions: read` permission
+- [ ] Codecov token set (or remove for public repos)
+- [ ] Coverage threshold met (80%)
 
 ---
 
