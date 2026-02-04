@@ -6,7 +6,6 @@ const resetButton = document.querySelector("[data-reset]");
 const copyButton = document.querySelector("[data-copy]");
 const copyTarget = document.querySelector("[data-copy-target]");
 const copyStatus = document.querySelector("[data-copy-status]");
-const focusToggle = document.querySelector("#toggleFocus");
 
 const safeParse = (value) => {
   try {
@@ -85,15 +84,6 @@ const copyCommands = async () => {
     setTimeout(() => {
       copyStatus.textContent = "";
     }, 2000);
-  }
-};
-
-const toggleFocus = () => {
-  document.body.classList.toggle("focus");
-  if (focusToggle) {
-    focusToggle.textContent = document.body.classList.contains("focus")
-      ? "Exit Focus"
-      : "Focus Mode";
   }
 };
 
@@ -176,10 +166,6 @@ if (resetButton) {
 
 if (copyButton) {
   copyButton.addEventListener("click", copyCommands);
-}
-
-if (focusToggle) {
-  focusToggle.addEventListener("click", toggleFocus);
 }
 
 loadProgress();
