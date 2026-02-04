@@ -64,7 +64,10 @@ This is a simple Python calculator project with a focus on clean architecture, m
 2. **Test** - Create comprehensive tests
 3. **Document** - Update README Feature Tracker table
 4. **Verify** - Check architecture diagram needs updates
-5. **Commit** - Use clear commit messages
+5. **Pre-commit** - Run pre-commit hooks (see pre-commit-hook.mdc for details)
+6. **Commit** - Use clear commit messages
+
+**Note:** Step 5 (Pre-commit) follows the flawless workflow defined in `.rules/pre-commit-hook.mdc`
 
 ## File Organization
 
