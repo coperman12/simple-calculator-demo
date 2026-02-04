@@ -532,7 +532,10 @@ body {
   border: none;
   background: rgba(15, 23, 42, 0.2);
   cursor: pointer;
-  padding: 16px;
+  padding: 0;
+  min-width: 44px;
+  min-height: 44px;
+  background-clip: content-box;
 }
 
 .slide-dot.active {
@@ -752,7 +755,7 @@ body.focus .card.focus-keep {
   }
 
   .slide-nav {
-    padding: 8px 12px;
+    padding: 10px 14px;
     font-size: 0.8rem;
     min-width: 44px;
     min-height: 44px;
