@@ -11,7 +11,7 @@ Same with code! Each folder has a purpose:
 
 ## 📁 Folder Guide
 
-### `calculator/` - The Brain
+### `src/` - The Brain
 **What it is**: Where the actual calculator code lives
 
 **Why**: Keeps all the app logic in one place. When the app grows, you know exactly where to find it!
