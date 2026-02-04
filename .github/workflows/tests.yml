@@ -403,13 +403,30 @@ jobs:
           echo "✅ Copied learning UI"
 
           # Copy Allure reports to /allure subdirectory
-          # The allure-report-action outputs to allure-history (with history) or allure-report (first run)
+          # The allure-report-action creates numbered directories (e.g., /61/, /62/)
           mkdir -p _site/allure
 
-          # Try allure-history first (has historical data)
+          # Check if allure-history exists and copy ALL numbered reports
           if [ -d "allure-history" ] && [ "$(ls -A allure-history)" ]; then
+            # Copy all numbered report directories
             cp -r allure-history/* _site/allure/
-            echo "✅ Copied Allure reports from allure-history (with trends)"
+            echo "✅ Copied all Allure report versions from allure-history"
+
+            # Find the latest report number (highest number)
+            LATEST_REPORT=$(ls -1v allure-history | grep '^[0-9]*$' | tail -1)
+
+            if [ -n "$LATEST_REPORT" ]; then
+              echo "📊 Latest report number: $LATEST_REPORT"
+
+              # Copy the latest report to the root of /allure/ (so /allure/ works directly)
+              if [ -d "allure-history/$LATEST_REPORT" ]; then
+                cp -r allure-history/$LATEST_REPORT/* _site/allure/
+                echo "✅ Copied latest report (#$LATEST_REPORT) to /allure/ root"
+              fi
+            else
+              echo "⚠️  Warning: Could not find numbered report directory"
+            fi
+
           # Fallback to allure-report (first run or if history fails)
           elif [ -d "allure-report" ] && [ "$(ls -A allure-report)" ]; then
             cp -r allure-report/* _site/allure/
@@ -443,12 +460,17 @@ jobs:
           echo "📂 Allure directory contents:"
           ls -la _site/allure/ || echo "❌ Allure directory is empty or doesn't exist"
           echo ""
-          echo "📂 Checking for index.html in allure:"
+          echo "📂 Checking for index.html in allure root:"
           if [ -f "_site/allure/index.html" ]; then
-            echo "✅ Found index.html in allure directory"
+            echo "✅ Found index.html at /allure/index.html (main entry point)"
           else
-            echo "❌ ERROR: index.html missing from allure directory!"
+            echo "❌ ERROR: index.html missing from /allure/ root!"
+            echo "This means the landing page link to /allure/ will 404"
+            exit 1
           fi
+          echo ""
+          echo "📂 Numbered report directories in /allure/:"
+          ls -1 _site/allure/ | grep '^[0-9]*$' || echo "No numbered directories found"
 
       # Prepare the complete site for GitHub Pages deployment
       - name: Upload artifact for GitHub Pages
