@@ -87,6 +87,7 @@ repos:
         name: 📦 Check for large files
         description: Prevents accidentally committing large files
         args: ['--maxkb=500']
+        exclude: ^GuitaristForEver/
 
       - id: check-merge-conflict
         name: 🔀 Check for merge conflicts
