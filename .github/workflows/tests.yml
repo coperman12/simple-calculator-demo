@@ -361,6 +361,15 @@ jobs:
           allure_history: allure-history
           keep_reports: 20  # Keep last 20 reports (delete older ones)
 
+      # Debug: Check what was generated
+      - name: Debug - Check generated reports
+        run: |
+          echo "📂 Checking allure-report directory:"
+          ls -laR allure-report/ || echo "❌ allure-report doesn't exist"
+          echo ""
+          echo "📂 Checking allure-history directory:"
+          ls -laR allure-history/ || echo "❌ allure-history doesn't exist"
+
       # ┌─────────────────────────────────────────────────────────────────────┐
       # │ BUILD COMPLETE SITE STRUCTURE                                       │
       # │                                                                     │
@@ -376,37 +385,70 @@ jobs:
       - name: Build complete site structure
         run: |
           echo "📦 Building complete site with Allure at /allure..."
-          
+
+          # Debug: Check what directories exist
+          echo "🔍 Checking available directories:"
+          ls -la
+          echo ""
+
           # Create site directory
           mkdir -p _site
-          
+
           # Copy landing page
           cp index.html _site/
           echo "✅ Copied landing page"
-          
+
           # Copy learning UI
           cp -r docs/learn _site/
           echo "✅ Copied learning UI"
-          
+
           # Copy Allure reports to /allure subdirectory
+          # The allure-report-action outputs to allure-history (with history) or allure-report (first run)
           mkdir -p _site/allure
-          cp -r allure-history/* _site/allure/
-          echo "✅ Copied Allure reports to /allure"
-          
+
+          # Try allure-history first (has historical data)
+          if [ -d "allure-history" ] && [ "$(ls -A allure-history)" ]; then
+            cp -r allure-history/* _site/allure/
+            echo "✅ Copied Allure reports from allure-history (with trends)"
+          # Fallback to allure-report (first run or if history fails)
+          elif [ -d "allure-report" ] && [ "$(ls -A allure-report)" ]; then
+            cp -r allure-report/* _site/allure/
+            echo "✅ Copied Allure reports from allure-report (first run)"
+          else
+            echo "❌ ERROR: Neither allure-history nor allure-report found!"
+            echo "📂 Available directories:"
+            ls -la
+            exit 1
+          fi
+
           # Copy assets
           cp -r assets _site/
           echo "✅ Copied assets"
-          
+
           # Copy guides for relative links from learning UI
           if [ -d "guides" ]; then
             cp -r guides _site/
             echo "✅ Copied guides"
           fi
-          
+
+          # Create .nojekyll to prevent GitHub Pages from processing files
+          touch _site/.nojekyll
+          echo "✅ Created .nojekyll file"
+
           echo "🎉 Complete site structure ready!"
           echo ""
           echo "📂 Site structure:"
           ls -la _site
+          echo ""
+          echo "📂 Allure directory contents:"
+          ls -la _site/allure/ || echo "❌ Allure directory is empty or doesn't exist"
+          echo ""
+          echo "📂 Checking for index.html in allure:"
+          if [ -f "_site/allure/index.html" ]; then
+            echo "✅ Found index.html in allure directory"
+          else
+            echo "❌ ERROR: index.html missing from allure directory!"
+          fi
 
       # Prepare the complete site for GitHub Pages deployment
       - name: Upload artifact for GitHub Pages

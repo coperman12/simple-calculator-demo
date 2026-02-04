@@ -1,0 +1,60 @@
+---
+alwaysApply: true
+---
+
+# Pre-Commit Hook Rule
+
+Always run pre-commit hooks before making any git commits or when making file changes.
+
+## Flawless Commit Workflow
+
+**ALWAYS use this workflow before committing:**
+
+1. Stage all changes (including new files):
+   ```bash
+   git add .
+   ```
+
+2. Run pre-commit hooks (this will auto-fix issues):
+   ```bash
+   pre-commit run --all-files
+   ```
+
+3. If hooks modified files (exit code 1), stage the auto-fixes and re-run:
+   ```bash
+   git add -u
+   pre-commit run --all-files
+   ```
+
+4. Once all hooks pass (exit code 0), commit:
+   ```bash
+   git commit -m "your message"
+   ```
+
+## Automated Script
+
+You can use the automated script:
+```bash
+./.rules/commit-workflow.sh
+```
+
+This script automatically handles the loop of running pre-commit, staging fixes, and verifying.
+
+## Important Notes
+
+- **Never commit** until pre-commit exits with code 0
+- **Always stage auto-fixes** before retrying
+- **Check new/modified files** by staging them first
+- Pre-commit hooks that auto-fix (trailing whitespace, end-of-file, etc.) will modify files and return exit code 1 even though they fixed the issue - this is expected!
+
+## When to Run
+
+- ✅ After editing any Python files
+- ✅ After editing YAML, JSON, or TOML files
+- ✅ Before any git commit operation
+- ✅ When adding new files to the repository
+- ✅ After making changes that the user asks to commit
+
+## Never Skip
+
+Do not use `--no-verify` or skip pre-commit hooks unless explicitly requested by the user.

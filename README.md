@@ -54,9 +54,9 @@
 
 ### You'll Learn
 
-✅ Python project structure and testing  
-✅ Pre-commit hooks for code quality  
-✅ GitHub Actions CI/CD pipelines  
+✅ Python project structure and testing
+✅ Pre-commit hooks for code quality
+✅ GitHub Actions CI/CD pipelines
 ✅ Enterprise features (Allure, caching, quality gates)
 
 **Perfect for:** Students, bootcamp grads, developers learning DevOps.
