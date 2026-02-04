@@ -36,7 +36,7 @@ Same with code! Each folder has a purpose:
 **Contains**:
 - This file! (`STRUCTURE.md`) - Explains the folder organization
 
-### `assets/` - The Media Center
+### `docs/assets/` - The Media Center
 **What it is**: Where images, icons, and media files live
 
 **Why**: Keeps binary files separate from code. Makes it easy to find and update visuals!

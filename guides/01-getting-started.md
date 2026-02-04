@@ -93,8 +93,8 @@ Enter operation: quit
 
 ## What Just Happened?
 
-You ran a Python **module** (`-m calculator.calculator`). This means:
-- Python found the `calculator` package
+You ran a Python **module** (`-m src.calculator`). This means:
+- Python found the `src` package
 - Ran the `calculator.py` file inside it
 - Showed you a demo and interactive mode
 
